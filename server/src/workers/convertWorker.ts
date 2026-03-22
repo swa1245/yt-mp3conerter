@@ -33,6 +33,9 @@ convertQueue.process(async (bullJob: BullJob) => {
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
+      addHeader: [
+        'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      ],
     });
     
     dbJob.title = info.title || 'Audio Forge Downloader';
@@ -53,6 +56,9 @@ convertQueue.process(async (bullJob: BullJob) => {
       noWarnings: true,
       preferFreeFormats: true,
       ffmpegLocation: ffmpegDir,
+      addHeader: [
+        'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      ],
     });
 
     console.log(`Finished processing job ${jobId}`);

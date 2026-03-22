@@ -20,8 +20,10 @@ export interface ConvertResponse {
   jobId: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_URL}/api`,
 });
 
 export const convertUrl = async (url: string): Promise<ConvertResponse> => {
@@ -36,5 +38,5 @@ export const getJobStatus = async (jobId: string): Promise<Job> => {
 
 export const downloadMp3 = (jobId: string) => {
   // Use professional direct URL approach for downloading
-  window.location.href = `/api/download/${jobId}`;
+  window.location.href = `${API_URL}/api/download/${jobId}`;
 };
