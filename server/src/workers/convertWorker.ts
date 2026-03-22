@@ -33,10 +33,11 @@ convertQueue.process(async (bullJob: BullJob) => {
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
+      cookiesFromBrowser: 'chrome',
       addHeader: [
         'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       ],
-    });
+    } as any);
     
     dbJob.title = info.title || 'Audio Forge Downloader';
     await dbJob.save();
@@ -56,10 +57,11 @@ convertQueue.process(async (bullJob: BullJob) => {
       noWarnings: true,
       preferFreeFormats: true,
       ffmpegLocation: ffmpegDir,
+      cookiesFromBrowser: 'chrome',
       addHeader: [
         'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       ],
-    });
+    } as any);
 
     console.log(`Finished processing job ${jobId}`);
     dbJob.status = JobStatus.DONE;
