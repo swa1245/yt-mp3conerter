@@ -14,6 +14,18 @@ if (!fs.existsSync(TEMP_DIR)) {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
 
+// Check if cookies file exists (production) or use browser cookies (local)
+const COOKIES_FILE = path.join(process.cwd(), 'youtube-cookies.txt');
+const USE_COOKIES_FILE = fs.existsSync(COOKIES_FILE);
+
+function getYtdlOptions(baseOptions: any) {
+  if (USE_COOKIES_FILE) {
+    return { ...baseOptions, cookies: COOKIES_FILE };
+  } else {
+    return { ...baseOptions, cookiesFromBrowser: 'chrome' };
+  }
+}
+
 convertQueue.process(async (bullJob: BullJob) => {
   const { jobId } = bullJob.data;
   const dbJob = await Job.findById(jobId);
@@ -28,16 +40,15 @@ convertQueue.process(async (bullJob: BullJob) => {
 
     console.log(`Job ${jobId}: Fetching info for ${dbJob.url}`);
     
-    const info: any = await youtubedl(dbJob.url, {
+    const info: any = await youtubedl(dbJob.url, getYtdlOptions({
       dumpSingleJson: true,
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
-      cookiesFromBrowser: 'chrome',
       addHeader: [
         'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       ],
-    } as any);
+    }) as any);
     
     dbJob.title = info.title || 'Audio Forge Downloader';
     await dbJob.save();
@@ -48,7 +59,7 @@ convertQueue.process(async (bullJob: BullJob) => {
     
     const ffmpegDir = path.dirname(ffmpegPath.path);
     
-    await youtubedl(dbJob.url, {
+    await youtubedl(dbJob.url, getYtdlOptions({
       extractAudio: true,
       audioFormat: 'mp3',
       audioQuality: 128,
@@ -57,11 +68,10 @@ convertQueue.process(async (bullJob: BullJob) => {
       noWarnings: true,
       preferFreeFormats: true,
       ffmpegLocation: ffmpegDir,
-      cookiesFromBrowser: 'chrome',
       addHeader: [
         'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       ],
-    } as any);
+    }) as any);
 
     console.log(`Finished processing job ${jobId}`);
     dbJob.status = JobStatus.DONE;

@@ -3,6 +3,10 @@
 .env.local
 .env.*.local
 
+# YouTube cookies (sensitive)
+youtube-cookies.txt
+**/youtube-cookies.txt
+
 # Dependencies
 node_modules/
 
